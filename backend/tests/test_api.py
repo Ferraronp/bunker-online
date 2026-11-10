@@ -590,7 +590,7 @@ def test_contract_vote_skip_updates_only_voters_private_state(client):
     assert cmd(client, host, 'open_vote').status_code == 200
 
     response = cast(client, alice, 'skip')
-    assert response.status_code == 201  # Lab 4 CI demonstration: intentionally wrong; fix in next commit.
+    assert response.status_code == 200
     assert response.json() == {'ok': True}
 
     alice_state = state(client, alice)['state']
