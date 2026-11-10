@@ -581,3 +581,46 @@ def test_professional_experience_respects_age_and_can_be_disabled(client):
     join(client,next_host['id'],'Напарник')
     assert cmd(client,next_host,'start').status_code==200
     assert 'experience' not in next(c for c in state(client,next_host)['own_hand'] if c['category_id']=='job')
+
+
+def test_contract_vote_skip_updates_only_voters_private_state(client):
+    """Lab 4: successful US-5/FR-5 vote follows the documented HTTP contract."""
+    host, alice, observer = make_players(client, 3)
+    assert cmd(client, host, 'start').status_code == 200
+    assert cmd(client, host, 'open_vote').status_code == 200
+
+    response = cast(client, alice, 'skip')
+    assert response.status_code == 201  # Lab 4 CI demonstration: intentionally wrong; fix in next commit.
+    assert response.json() == {'ok': True}
+
+    alice_state = state(client, alice)['state']
+    observer_state = state(client, observer)['state']
+    assert alice_state['my_vote'] == 'skip'
+    assert alice_state['vote_count'] == 1
+    assert observer_state['my_vote'] is None
+    assert observer_state['vote_count'] == 1
+    assert 'votes' not in alice_state
+    assert 'votes' not in observer_state
+
+    # Changing the vote replaces it; it does not add a second ballot.
+    response = cast(client, alice, host['player_id'])
+    assert response.status_code == 200
+    assert response.json() == {'ok': True}
+    assert state(client, alice)['state']['my_vote'] == host['player_id']
+    assert state(client, alice)['state']['vote_count'] == 1
+
+
+def test_contract_vote_before_voting_is_http_400_without_recording(client):
+    """Lab 4: voting in phase round is rejected without mutating the tally."""
+    host, alice = make_players(client, 2)
+    assert cmd(client, host, 'start').status_code == 200
+    assert state(client, alice)['phase'] == 'round'
+
+    response = cast(client, alice, 'skip')
+    assert response.status_code == 400
+    assert response.json() == {'detail': 'Голосовать сейчас нельзя'}
+
+    snapshot = state(client, alice)
+    assert snapshot['phase'] == 'round'
+    assert snapshot['state']['vote_count'] == 0
+    assert snapshot['state']['my_vote'] is None
