@@ -1,0 +1,21 @@
+@startuml
+title Контекст системы «Последний рубеж»
+left to right direction
+skinparam shadowing false
+actor "Ведущий" as Host
+actor "Игрок" as Player
+actor "Зритель" as Spectator
+actor "Администратор\nконтента" as Admin
+rectangle "Веб-приложение «Последний рубеж»" as Game {
+  usecase "Лобби, карты,\nраунды и голосование" as Core
+}
+database "PostgreSQL 16" as DB
+cloud "Discord (голосовая связь,\nБЕЗ API-интеграции)" as Discord
+Host --> Core : Управление комнатой
+Player --> Core : Игра и голосование
+Spectator --> Core : Публичный просмотр
+Admin --> Core : Паки
+Core --> DB : Хранение состояния
+Host .. Discord : Общение вне системы
+Player .. Discord
+@enduml

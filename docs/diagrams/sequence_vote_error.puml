@@ -1,0 +1,23 @@
+@startuml
+title US-5 — голосование и ошибка неверной фазы
+actor "Игрок" as User
+participant "React (браузер)" as UI
+participant "FastAPI /vote" as API
+participant "game.cast_vote" as Game
+database "PostgreSQL" as DB
+User -> UI : Выбрать «Пропустить»
+UI -> API : POST /api/rooms/{id}/vote {target:"skip"}
+API -> DB : Прочитать Room и авторизовать Player
+DB --> API : phase, actor
+API -> Game : cast_vote(room, actor, "skip")
+alt phase == voting, игрок активен
+  Game -> DB : Сохранить/заменить голос
+  DB --> API : OK
+  API --> UI : 200 {ok:true}
+  UI --> User : Голос принят
+else phase != voting
+  Game --> API : HTTPException 400
+  API --> UI : 400 «Голосовать сейчас нельзя»
+  UI --> User : Ошибка; голос не сохранён
+end
+@enduml

@@ -1,0 +1,31 @@
+@startuml
+title Диаграмма вариантов использования «Последний рубеж»
+left to right direction
+skinparam packageStyle rectangle
+actor "Ведущий" as Host
+actor "Игрок" as Player
+actor "Зритель" as Spectator
+actor "Администратор" as Admin
+rectangle "Последний рубеж" {
+ usecase "FR-1 Создать комнату" as U1
+ usecase "FR-2 Присоединиться" as U2
+ usecase "FR-3 Начать партию" as U3
+ usecase "FR-4 Просмотр и раскрытие карт" as U4
+ usecase "FR-5 Голосовать" as U5
+ usecase "FR-6 Раунды и итоги" as U6
+ usecase "FR-7 Наблюдать" as U7
+ usecase "FR-8 Управлять паками" as U8
+ usecase "FR-9 Откат / завершение" as U9
+}
+Host --> U1
+Host --> U3
+Host --> U6
+Host --> U9
+Host --> U4
+Host --> U5
+Player --> U2
+Player --> U4
+Player --> U5
+Spectator --> U7
+Admin --> U8
+@enduml

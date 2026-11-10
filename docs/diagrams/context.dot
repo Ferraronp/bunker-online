@@ -1,0 +1,5 @@
+digraph G { graph [label="Контекст системы «Последний рубеж»",labelloc=t,fontsize=20,fontname="DejaVu Sans",bgcolor="white",pad="0.35",rankdir=LR]; node [fontname="DejaVu Sans",fontsize=12,shape=box,style="rounded,filled",fillcolor="#eef3f8",color="#657c93",margin="0.17,0.10"]; edge [fontname="DejaVu Sans",fontsize=10,color="#57697b"];
+host [label="Ведущий"]; player [label="Игрок"]; viewer [label="Зритель"]; admin [label="Администратор\nконтента"];
+subgraph cluster_system { label="Веб-приложение «Последний рубеж»"; style="rounded,filled";color="#9bb4cb";fillcolor="#e6f1fc"; core [label="Лобби / карты / голосование\nFastAPI + React + WebSocket",shape=component,fillcolor="#ffffff"]; }
+db [label="PostgreSQL 16",shape=cylinder,fillcolor="#fff5df"]; discord [label="Discord\nголосовая связь вне сайта",shape=oval,fillcolor="#f1e8fa"];
+host -> core [label="управление"];player -> core [label="игра"];viewer -> core [label="просмотр"];admin -> core [label="паки"]; core->db [label="данные"];host->discord [style=dashed,label="без API-интеграции",constraint=false]; player->discord[style=dashed,constraint=false]; }
