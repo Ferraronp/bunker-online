@@ -1,0 +1,43 @@
+@startuml
+title Модель предметных данных (3 таблицы + 2 JSON-сущности)
+class Pack <<SQL table>> {
+  id: str
+  title: str
+  revision: int
+  content: JSON
+  is_builtin: bool
+}
+class Room <<SQL table>> {
+  id: str
+  title: str
+  phase: str
+  host_id: str
+  pack_snapshot: JSON
+  state: JSON
+  undo_stack: JSON
+}
+class Player <<SQL table>> {
+  id: str
+  room_id: str
+  token: str
+  nickname: str
+  spectator: bool
+  alive: bool
+  hand: JSON
+}
+class Card <<embedded in Player.hand>> {
+  id: str
+  category_id: str
+  value: str
+  revealed: bool
+}
+class Vote <<embedded in Room.state.votes>> {
+  voter_id: str
+  target: player_id | skip
+}
+Pack "1" .. "0..*" Room : pack_id / snapshot
+Room "1" *-- "0..*" Player : participants
+Player "1" *-- "0..*" Card : private hand
+Room "1" *-- "0..*" Vote : votes JSON
+Vote --> Player : voter / target
+@enduml

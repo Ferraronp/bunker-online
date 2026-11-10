@@ -1,0 +1,16 @@
+@startuml
+title Состояния игровой комнаты
+[*] --> lobby : FR-1 создать комнату
+lobby --> round : FR-3 start [игроков >= 2]
+round --> voting : FR-6 open_vote
+voting --> round : FR-6 resolve_vote [пропуск/исключение]
+voting --> voting : FR-6 resolve_vote [ничья, второй тур]
+round --> round : next_round / reveal
+round --> finished : finish / достигнута вместимость
+voting --> finished : finish / достигнута вместимость
+finished --> [*] : удаление комнаты
+note right of finished
+  После финала игроки могут раскрывать
+  оставшиеся карты без новых эффектов.
+end note
+@enduml
