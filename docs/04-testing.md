@@ -43,7 +43,12 @@ Workflow: [`.github/workflows/ci.yml`](../.github/workflows/ci.yml).
 
 Согласно заданию, в **первом коммите** ветки `lab-4` в новом тесте намеренно ожидается HTTP **201** вместо реального **200**. Это *временный дефект теста*, а не ошибка API: проверка должна упасть на сравнении `200 != 201`. Во **втором отдельном коммите** ожидание восстанавливается на `200`; после него тесты должны пройти.
 
-Фактические ссылки на GitHub Actions **Failed** и **Passed** добавляются в описание pull request только после подтверждённых запусков. Данная запись не заменяет реальные прогоны.
+**Подтверждённые запуски GitHub Actions для коммитов PR #8:**
+
+- 🔴 **[Failed — run 42851272229](https://github.com/Ferraronp/bunker-online/actions/runs/42851272229)** на коммите `69d9692`. Job `backend`: `1 failed, 27 passed`, причина — `assert 200 == 201` в `test_contract_vote_skip_updates_only_voters_private_state`; job `frontend` прошёл.
+- 🟢 **[Passed — run 42851472623](https://github.com/Ferraronp/bunker-online/actions/runs/42851472623)** на отдельном исправляющем коммите `c3d99a6`. Job `backend`: `28 passed`, job `frontend`: успешно (`npm run build`). Компиляция Python прошла.
+
+Оба приведённых прогона вызваны событием `push` в ветке `lab-4` (открытого PR #8); workflow также настроен на `pull_request` в `main`. Ссылки продублированы в описании PR.
 
 ## 5. Ревью и завершение
 
