@@ -1,0 +1,20 @@
+@startuml
+title US-2 — подключение к комнате
+actor "Игрок" as User
+participant "React (браузер)" as UI
+participant "FastAPI /join" as API
+database "PostgreSQL" as DB
+User -> UI : Ввод кода комнаты и ника
+UI -> API : POST /api/rooms/{id}/join
+API -> DB : Найти комнату, проверить занятость ника
+DB --> API : Room + Players
+alt Комната и ник корректны
+  API -> DB : Создать Player + token
+  DB --> API : OK
+  API --> UI : HTTP 200 {id, token, player_id, spectator}
+  UI --> User : Открыть комнату
+else Ник занят / комната отсутствует
+  API --> UI : HTTP 400 / 404 + detail
+  UI --> User : Сообщение об ошибке
+end
+@enduml
